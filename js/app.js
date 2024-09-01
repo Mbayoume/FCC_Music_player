@@ -183,8 +183,22 @@ const playSong = (id)=>{
 
   // PLAY the song using play() method from the web audio api
   audio.play();
-
+  highlightCurrentSong()
 };
+
+/*
+ * -----------------------------------------------------------------
+ * render the song title and the artist 
+ * -----------------------------------------------------------------
+ */
+
+const setPlayerDisplay = ()=>{
+  const playingSong = document.getElementById('player-song-title');
+  const songArtist = document.getElementById('player-song-artist');
+  const currentTitle = userData?.currentSong?.title;
+  const currentArtist = userData?.currentSong?.artist;
+  
+}
 
 
 /*
@@ -293,5 +307,3 @@ const sortSongs = ()=>{
 }
 
 renderSongs(sortSongs());
-
-
