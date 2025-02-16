@@ -1,3 +1,13 @@
+/*
+ * -----------------------------------------------------------------
+ * first of all we need to identify the variables 
+ * -playlsit songs 
+ * -play button
+ * -next button 
+ * -previous button 
+ * -shuffle button  
+ * -----------------------------------------------------------------
+ */
 const playlistSongs = document.getElementById("playlist-songs");
 const playButton = document.getElementById("play");
 const pauseButton = document.getElementById("pause");
@@ -5,6 +15,12 @@ const nextButton = document.getElementById('next');
 const previousButton = document.getElementById('previous');
 const shuffleButton = document.getElementById('shuffle');
 
+
+/*
+ * -----------------------------------------------------------------
+ * create an array conatines the songs object which contain the (id-titlte-artist-duartion)
+ * -----------------------------------------------------------------
+ */
 // Songs
 const allSongs = [
     {
@@ -82,6 +98,14 @@ const allSongs = [
 
 //start working with the audio API
 
+
+/*
+ * -----------------------------------------------------------------
+ * creat a new instance from the audio object which is handeled by the browser
+ * -----------------------------------------------------------------
+ */
+
+
 const audio =new Audio();
 
 
@@ -120,6 +144,8 @@ playlistSongElements.forEach((songEl) => {
   }
 });
 
+
+console.log("the song has highlighted now check the UI")
 };
 
 
@@ -159,6 +185,21 @@ const getCurrentSongIndex = ()=>{
 // find method retrieve the element which fulfill the condition 
 // if there is no item satisfies the condition it return (undefined)
 
+
+/*
+ * -----------------------------------------------------------------
+ * describes the played song in the playlist when clickin on the plya 
+ * button
+ * -----------------------------------------------------------------
+ */
+
+const setPlayButtonAccessibleText = ()=>{
+  // get the cuurently playing song
+  const song = userData?.songs || userData?.currentSong;
+  playButton.setAttribute('arial-label')
+}
+
+
 const playSong = (id)=>{
   const song = userData?.songs.find((song)=>song.id ===id);
   audio.src = song.src;
@@ -184,6 +225,7 @@ const playSong = (id)=>{
   // PLAY the song using play() method from the web audio api
   audio.play();
   highlightCurrentSong()
+  setPlayerDisplay()
 };
 
 /*
@@ -197,7 +239,8 @@ const setPlayerDisplay = ()=>{
   const songArtist = document.getElementById('player-song-artist');
   const currentTitle = userData?.currentSong?.title;
   const currentArtist = userData?.currentSong?.artist;
-  
+  playingSong.textContent = currentTitle ? currentTitle : "";
+  songArtist.textContent = currentArtist? currentArtist: "";
 }
 
 
