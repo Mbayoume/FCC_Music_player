@@ -1,3 +1,6 @@
+
+const _ = require('lodash');
+
 // const number = [1,2,3,4,5,6];
 // const test = number.map(num=> num +3);
 
@@ -157,5 +160,9 @@ const users = [
 // )
 
 const names = ["Tom", "Jessica", "Quincy", "Naomi","mohamed","tamer","ahmed"];
-names.sort(() => Math.random() - 0.5);
-console.log(names)
+// names.sort(() => Math.random() - 0.5);
+// console.log(shuffle(names))
+// console.log(_.shuffle(names))
+
+let result = names.filter(user => user.length <=3);
+console.log(result);

@@ -178,7 +178,7 @@ const renderSongs = (array)=>{
           <span class="playlist-song-artist">${song.artist}</span>
           <span class="playlist-song-duration">${song.duration}</span>
       </button>
-      <button class="playlist-song-delete" aria-label="Delete ${song.title}">
+      <button class="playlist-song-delete" aria-label="Delete ${song.title}" onclick="deleteSong(${song.id})">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#4d4d62"/>
           <path fill-rule="evenodd" clip-rule="evenodd" d="M5.32587 5.18571C5.7107 4.90301 6.28333 4.94814 6.60485 5.28651L8 6.75478L9.39515 5.28651C9.71667 4.94814 10.2893 4.90301 10.6741 5.18571C11.059 5.4684 11.1103 5.97188 10.7888 6.31026L9.1832 7.99999L10.7888 9.68974C11.1103 10.0281 11.059 10.5316 10.6741 10.8143C10.2893 11.097 9.71667 11.0519 9.39515 10.7135L8 9.24521L6.60485 10.7135C6.28333 11.0519 5.7107 11.097 5.32587 10.8143C4.94102 10.5316 4.88969 10.0281 5.21121 9.68974L6.8168 7.99999L5.21122 6.31026C4.8897 5.97188 4.94102 5.4684 5.32587 5.18571Z" fill="white"/></svg>
         </button>
@@ -186,7 +186,47 @@ const renderSongs = (array)=>{
       `;
   }).join("")
   playlsitSongs.innerHTML = songsHTML;
+  // check if the playlist is empty and reset the songs list 
+  if (userData?.songs.length === 0) {
+    const resetButton = document.createElement("button");
+  const resetText = document.createTextNode("Reset Playlist");
+  // in the next steps we will create the functionality of reset the playlist 
+    resetButton.id="reset";
+    resetButton.ariaLabel = "Reset playlist";
+    resetButton.appendChild(resetText);
+    playlsitSongs.appendChild(resetButton);
+
+// refill the playlist if it's empty
+    resetButton.addEventListener(()=>{
+      userData?.songs = [...allSongs];
+      renderSongs(sortSongs())
+      setPlayButtonAccessibleText();
+      resetButton.remove()
+    })
+  }
 }
+
+// =============================================================================
+// create the Delete action to remove the song from the playlist 
+// =============================================================================
+// 
+
+const deleteSong = (id)=>{
+  // check if the deleted  song is playing right now or not if so we need to pause it first 
+    if(userData?.currentSong?.id === id){
+      userData.songCurrentTime = 0;
+      userData.currentSong = null;
+      pauseSong();
+      setPlayerDisplay();
+    }
+    userData.songs = userData?.songs.filter((song)=>song.id!==id);
+    renderSongs(userData?.songs);
+    highlightCurrentSong();
+    setPlayButtonAccessibleText();
+}
+
+
+
 
 
 // =============================================================================
@@ -198,10 +238,6 @@ const setPlayButtonAccessibleText = ()=>{
   const song = userData?.currentSong||userData?.songs[0];
   song.setAttribute('aria-label',song?.title ? `Play ${song.title}` : "Play")
 }
-
-
-
-
 
 
 // =============================================================================
@@ -279,15 +315,45 @@ const playPreviousSong = ()=>{
 // 
 
 const shuffle = ()=>{
-  // use 
+  // use Math.random with sort method as a callback function 
+  userData?.songs.sort(()=>Math.random()-0.5);
+  userData.currentSong = null;
+  userData.songCurrentTime=0;
+  renderSongs(userData?.songs);
+  // i've disabled the pause function 
+  // pauseSong();
+  setPlayerDisplay();
+  setPlayButtonAccessibleText();
 }
 
 
 // declare next and previous functions 
 
 playNext.addEventListener("click", playNextSong)
-playPrevious.addEventListener("click",playPreviousSong)
 
+playPrevious.addEventListener("click",playPreviousSong);
+
+shuffleButton.addEventListener("click",shuffle);
+
+// play the next song after ending the current song 
+
+
+audio.addEventListener("ended",()=>{
+  const currentSongIndex = getCurrentSongIndex();
+  //check if the songs length is bigger than the current song index , if so there is a next song if false there is no next song
+
+  const nextSongExists = (userData.songs.length - 1 > currentSongIndex)? true:false;
+  if(nextSongExists){
+    playNextSong()
+  }else{
+    userData.currentSong = null;
+    userData.songCurrentTime = 0;
+    pauseSong();
+    setPlayerDisplay();
+    highlightCurrentSong();
+    setPlayButtonAccessibleText();
+  }
+})
 
 // =============================================================================
 // Highlight the playing song 
@@ -351,4 +417,3 @@ function getAudiocurrentTime (){
   
 }
 
-pauseButton.addEventListener
